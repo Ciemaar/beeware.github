@@ -16,7 +16,7 @@ jobs:
           printf '%s\n' "$PR_BODY" > pr_body.txt
 
           if ! grep -q "## PR Checklist:" pr_body.txt; then
-              echo "::error::PR checklist absent. We require PRs to use our template, your PR will be ignored until/unless you change to the standard template...."
+              echo "::error::PR checklist absent. We require PRs to use our template, your PR will be ignored until/unless you change to the standard template. See https://beeware.org/contributing/guide/how/submit-pr/ for details."
               exit 1
           fi
 
