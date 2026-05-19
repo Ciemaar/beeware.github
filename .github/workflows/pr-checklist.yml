@@ -19,20 +19,20 @@ jobs:
               fi
           }
 
-          require "^## PR Checklist:" \
+          require "^[[:space:]]*## PR Checklist:" \
             "PR checklist absent. We require PRs to use our template, your PR will be ignored until/unless you change to the standard template. See https://beeware.org/contributing/guide/how/submit-pr/ for details."
 
-          require "^- \[[xX]\] I will abide by the BeeWare Code of Conduct" \
+          require "^[[:space:]]*- \[[xX]\] I will abide by the BeeWare Code of Conduct" \
             "The 'Code of Conduct' checkbox must be checked."
 
-          require "^- \[[xX]\] I have read and have followed the \*\*CONTRIBUTING.md\*\* file" \
+          require "^[[:space:]]*- \[[xX]\] I have read and have followed the \*\*CONTRIBUTING.md\*\* file" \
             "The 'CONTRIBUTING.md' checkbox must be checked."
 
-          if grep -qE -- "^- \[[xX]\] This PR was generated or assisted using an AI tool" <<< "$PR_BODY"; then
-              require "^Assisted-by:" "'Assisted-by:' line is missing."
+          if grep -qE -- "^[[:space:]]*- \[[xX]\] This PR was generated or assisted using an AI tool" <<< "$PR_BODY"; then
+              require "^[[:space:]]*(-\s+)?Assisted-by:" "'Assisted-by:' line is missing."
 
               # Extract the value, strip HTML comments and whitespace
-              ASSISTED_BY_VAL=$(grep "^Assisted-by:" <<< "$PR_BODY" | sed -e 's/^Assisted-by://' -e 's/<!--.*-->//' | xargs)
+              ASSISTED_BY_VAL=$(grep -E "^[[:space:]]*(-\s+)?Assisted-by:" <<< "$PR_BODY" | sed -r -e 's/^[[:space:]]*(-\s+)?Assisted-by://' -e 's/<!--.*-->//' | xargs)
               if [ -z "$ASSISTED_BY_VAL" ]; then
                   echo "::error::You checked the AI tool checkbox but did not specify the tool in 'Assisted-by:'."
                   exit 1
