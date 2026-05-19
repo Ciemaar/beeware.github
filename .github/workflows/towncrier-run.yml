@@ -24,6 +24,9 @@ on:
         default: "ubuntu-latest"
         type: string
 
+permissions:
+  pull-requests: write
+
 defaults:
   run:
     shell: bash
@@ -70,6 +73,25 @@ jobs:
     - name: Run towncrier check
       id: tox
       run: tox -e towncrier-check
+
+    - name: Comment PR for Missing Change Note
+      if: always() && github.event_name == 'pull_request' && steps.tox.outcome == 'failure'
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        PR_NUM: ${{ github.event.pull_request.number }}
+      run: |
+        MESSAGE="The Towncrier check failed because a change note is missing from the \`changes\` directory. Please visit the BeeWare Contribution Guide to learn how to add a change note for this PR: https://beeware.org/contributing/guide/how/change-note/
+
+        <!-- towncrier-missing-change-note -->"
+
+        COMMENTS=$(gh api repos/${{ github.repository }}/issues/${PR_NUM}/comments)
+        HAS_COMMENT=$(jq -r '.[] | select(.body | contains("<!-- towncrier-missing-change-note -->")) | .body' <<< "$COMMENTS")
+
+        if [ -z "$HAS_COMMENT" ]; then
+          gh api --method POST repos/${{ github.repository }}/issues/${PR_NUM}/comments -f body="$MESSAGE"
+        else
+          echo "Comment already exists."
+        fi
 
     - name: Towncrier Check Resolution Instructions
       if: always() && steps.tox.outcome == 'failure'
