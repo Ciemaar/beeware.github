@@ -35,6 +35,9 @@ jobs:
           require "^[[:space:]]*- \[\s*[xX]\s*\] I have read and have followed the \*\*CONTRIBUTING.md\*\* file" \
             "The 'CONTRIBUTING.md' checkbox must be checked."
 
+          require "^[[:space:]]*- \[\s*[xX]?\s*\] This PR was generated or assisted using an AI tool" \
+            "The AI tool checkbox is missing. It must be present and either checked or unchecked."
+
           if grep -qE -- "^[[:space:]]*- \[\s*[xX]\s*\] This PR was generated or assisted using an AI tool" <<< "$PR_BODY"; then
               require "^[[:space:]]*(-\s+)?Assisted-by:" "'Assisted-by:' line is missing."
 
