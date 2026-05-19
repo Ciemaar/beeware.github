@@ -48,13 +48,15 @@ jobs:
           fi
 
           if [ ${#ERRORS[@]} -gt 0 ]; then
-              # Find existing comment
-              COMMENT_ID=$(gh api repos/$REPO/issues/$PR_NUMBER/comments --jq '.[] | select(.body | contains("<!-- pr-checklist-comment -->")) | .id' | head -n 1)
+              # Find existing comments
+              COMMENT_IDS=$(gh api --paginate repos/$REPO/issues/$PR_NUMBER/comments --jq '.[] | select(.body | contains("<!-- pr-checklist-comment -->")) | .id')
 
               PREFIX=""
-              if [ -n "$COMMENT_ID" ]; then
-                  # Delete existing comment
-                  gh api -X DELETE repos/$REPO/issues/comments/$COMMENT_ID > /dev/null
+              if [ -n "$COMMENT_IDS" ]; then
+                  for ID in $COMMENT_IDS; do
+                      # Delete existing comment
+                      gh api -X DELETE repos/$REPO/issues/comments/$ID > /dev/null
+                  done
                   PREFIX="As previously noted, "
               fi
 
