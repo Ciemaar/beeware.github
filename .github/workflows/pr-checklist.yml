@@ -83,7 +83,7 @@ jobs:
               "
 
               # Strip leading indentation from COMMENT_BODY
-              COMMENT_BODY=$(echo "$COMMENT_BODY" | sed -E 's/^[[:space:]]+//')
+              COMMENT_BODY=$(printf '%s\n' "$COMMENT_BODY" | sed -E 's/^[[:space:]]+//')
               # Post new comment
               gh api repos/$REPO/issues/$PR_NUMBER/comments -f body="$COMMENT_BODY" > /dev/null
 
