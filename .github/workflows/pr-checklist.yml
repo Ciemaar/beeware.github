@@ -60,18 +60,21 @@ jobs:
 
               # Build the comment body
               COMMENT_BODY="<!-- pr-checklist-comment -->
-Hi there! ${PREFIX}your pull request is missing some required elements. Please review and complete the checklist in our PR template.
+              Hi there! ${PREFIX}your pull request is missing some required elements. Please review and complete the checklist in our PR template.
 
-**Missing items:**
-"
+              **Missing items:**
+              "
               for ERR in "${ERRORS[@]}"; do
                   COMMENT_BODY+="- $ERR
-"
+              "
               done
 
               COMMENT_BODY+="
-For key details on how to contribute, please review and follow the [**CONTRIBUTING.md**](https://github.com/$REPO/blob/main/CONTRIBUTING.md) file.
-"
+              For key details on how to contribute, please review and follow the [**CONTRIBUTING.md**](https://github.com/$REPO/blob/main/CONTRIBUTING.md) file.
+              "
+
+              # Strip leading indentation from COMMENT_BODY
+              COMMENT_BODY=$(echo "$COMMENT_BODY" | sed -E 's/^[[:space:]]+//')
               # Post new comment
               gh api repos/$REPO/issues/$PR_NUMBER/comments -f body="$COMMENT_BODY" > /dev/null
 
