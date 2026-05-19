@@ -1,0 +1,42 @@
+name: PR Checklist
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  check-pr-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR body
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          require() {
+              if ! grep -qE -- "$1" <<< "$PR_BODY"; then
+                  echo "::error::$2"
+                  exit 1
+              fi
+          }
+
+          require "^[[:space:]]*## PR Checklist:" \
+            "PR checklist absent. We require PRs to use our template, your PR will be ignored until/unless you change to the standard template. See https://beeware.org/contributing/guide/how/submit-pr/ for details."
+
+          require "^[[:space:]]*- \[\s*[xX]\s*\] I will abide by the BeeWare Code of Conduct" \
+            "The 'Code of Conduct' checkbox must be checked."
+
+          require "^[[:space:]]*- \[\s*[xX]\s*\] I have read and have followed the \*\*CONTRIBUTING.md\*\* file" \
+            "The 'CONTRIBUTING.md' checkbox must be checked."
+
+          if grep -qE -- "^[[:space:]]*- \[\s*[xX]\s*\] This PR was generated or assisted using an AI tool" <<< "$PR_BODY"; then
+              require "^[[:space:]]*(-\s+)?Assisted-by:" "'Assisted-by:' line is missing."
+
+              # Extract the value, strip HTML comments and whitespace
+              ASSISTED_BY_VAL=$(grep -E "^[[:space:]]*(-\s+)?Assisted-by:" <<< "$PR_BODY" | sed -r -e 's/^[[:space:]]*(-\s+)?Assisted-by://' -e 's/<!--.*-->//' | tr -d '[:space:]')
+              if [ -z "$ASSISTED_BY_VAL" ]; then
+                  echo "::error::You checked the AI tool checkbox but did not specify the tool in 'Assisted-by:'."
+                  exit 1
+              fi
+          fi
+
+          echo "PR Checklist verification passed."
