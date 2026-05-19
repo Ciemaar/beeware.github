@@ -7,15 +7,22 @@ on:
 jobs:
   check-pr-template:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Check PR body
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
+          ERRORS=()
+
           require() {
               if ! grep -qE -- "$1" <<< "$PR_BODY"; then
                   echo "::error::$2"
-                  exit 1
+                  ERRORS+=("$2")
               fi
           }
 
@@ -34,9 +41,41 @@ jobs:
               # Extract the value, strip HTML comments and whitespace
               ASSISTED_BY_VAL=$(grep -E "^[[:space:]]*(-\s+)?Assisted-by:" <<< "$PR_BODY" | sed -r -e 's/^[[:space:]]*(-\s+)?Assisted-by://' -e 's/<!--.*-->//' | tr -d '[:space:]')
               if [ -z "$ASSISTED_BY_VAL" ]; then
-                  echo "::error::You checked the AI tool checkbox but did not specify the tool in 'Assisted-by:'."
-                  exit 1
+                  MSG="You checked the AI tool checkbox but did not specify the tool in 'Assisted-by:'."
+                  echo "::error::$MSG"
+                  ERRORS+=("$MSG")
               fi
+          fi
+
+          if [ ${#ERRORS[@]} -gt 0 ]; then
+              # Find existing comment
+              COMMENT_ID=$(gh api repos/$REPO/issues/$PR_NUMBER/comments --jq '.[] | select(.body | contains("<!-- pr-checklist-comment -->")) | .id' | head -n 1)
+
+              PREFIX=""
+              if [ -n "$COMMENT_ID" ]; then
+                  # Delete existing comment
+                  gh api -X DELETE repos/$REPO/issues/comments/$COMMENT_ID > /dev/null
+                  PREFIX="As previously noted, "
+              fi
+
+              # Build the comment body
+              COMMENT_BODY="<!-- pr-checklist-comment -->
+Hi there! ${PREFIX}your pull request is missing some required elements. Please review and complete the checklist in our PR template.
+
+**Missing items:**
+"
+              for ERR in "${ERRORS[@]}"; do
+                  COMMENT_BODY+="- $ERR
+"
+              done
+
+              COMMENT_BODY+="
+For key details on how to contribute, please review and follow the [**CONTRIBUTING.md**](https://github.com/$REPO/blob/main/CONTRIBUTING.md) file.
+"
+              # Post new comment
+              gh api repos/$REPO/issues/$PR_NUMBER/comments -f body="$COMMENT_BODY" > /dev/null
+
+              exit 1
           fi
 
           echo "PR Checklist verification passed."
