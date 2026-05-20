@@ -71,7 +71,7 @@ jobs:
 
               # Build the comment body
               COMMENT_BODY="<!-- pr-checklist-comment -->
-              Hi there! ${PREFIX}your pull request is missing some required elements. Please review and complete the checklist in our PR template.
+              Thank you for your pull request! However, ${PREFIX}your pull request is missing some required elements. Please review and complete the checklist in our PR template.
 
               **Missing items:**
               "
