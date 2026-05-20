@@ -80,7 +80,7 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
         PR_NUM: ${{ github.event.pull_request.number }}
       run: |
-        MESSAGE="The Towncrier check failed because a change note is missing from the \`changes\` directory. Please visit the BeeWare Contribution Guide to learn how to add a change note for this PR: https://beeware.org/contributing/guide/how/change-note/
+        MESSAGE="Thank you for your pull request! However, the Towncrier check failed because a change note is missing from the \`changes\` directory. Please visit the BeeWare Contribution Guide to learn how to add a change note for this PR: https://beeware.org/contributing/guide/how/change-note/
 
         <!-- towncrier-missing-change-note -->"
 
