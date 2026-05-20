@@ -74,13 +74,13 @@ jobs:
       id: tox
       run: tox -e towncrier-check
 
-    - name: Comment PR for Missing Change Note
+    - name: Add PR comment if change note is missing
       if: always() && github.event_name == 'pull_request' && steps.tox.outcome == 'failure'
       env:
         GITHUB_TOKEN: ${{ github.token }}
         PR_NUM: ${{ github.event.pull_request.number }}
       run: |
-        MESSAGE="Thank you for your pull request! However, the Towncrier check failed because a change note is missing from the \`changes\` directory. Please visit the BeeWare Contribution Guide to learn how to add a change note for this PR: https://beeware.org/contributing/guide/how/change-note/
+        MESSAGE="Thank you for your pull request! Unfortunately, CI checks for this pull request are failing because you haven't included a change note in your contribution. Details on creating a change note can be found in the [BeeWare Contribution Guide](https://beeware.org/contributing/guide/how/change-note/).
 
         <!-- towncrier-missing-change-note -->"
 
