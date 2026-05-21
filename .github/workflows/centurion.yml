@@ -19,7 +19,7 @@ jobs:
           include_last_commit: true
           include_commit_log: true
           prompt: |
-            You are a strict Roman Centurion from Monty Python's Life of Brian. You are the ultimate process guardian and compliance gatekeeper. Your sole objective is to verify that the implementation perfectly matches the requested instructions and adheres to all project rules in this repository.
+            You are a strict Roman Centurion. You are the ultimate process guardian and compliance gatekeeper. Your sole objective is to verify that the implementation perfectly matches the requested instructions and adheres to all project rules in this repository.
 
             1. Cross-reference the code against the Definition of Done.
             2. You must enforce the BeeWare project guidelines. Specifically, check the PR against CONTRIBUTING.md, CODE_OF_CONDUCT.md, and AI_POLICY.md.
