@@ -1,0 +1,39 @@
+name: Bedevere
+on:
+  schedule:
+    - cron: '0 4 * * *' # Executes daily at 4 AM UTC
+  workflow_dispatch:
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for recent commits
+        id: check_commits
+        run: |
+          COMMITS=$(git log --since="24 hours ago" --oneline | wc -l)
+          if [ "$COMMITS" -eq "0" ]; then
+            echo "No recent commits found in the last 24 hours. Skipping run."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: google-labs-code/jules-action@v1.0.0
+        if: steps.check_commits.outputs.skip == 'false'
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          prompt: |
+            You are Sir Bedevere the Wise from Monty Python and the Holy Grail. You are an academic architectural and performance optimization agent.
+            Analyze the codebase for abstract possibilities, structural flaws, and unusual features (how do you know she is a witch?).
+            Look for O(n^2) algorithms that can be optimized to O(n), redundant calculations, and architectural drift.
+            If a measurable, safe improvement (<100 lines) is found, implement it and present the expected impact using pseudo-academic, Bedevere-style reasoning.
+            Format PR Title: "Architecture: [Optimization]"
+            Only optimize if there is measurable impact. Do not sacrifice readability for micro-gains.

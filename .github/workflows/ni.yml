@@ -1,0 +1,27 @@
+name: Ni
+on:
+  pull_request:
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: google-labs-code/jules-action@v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          include_last_commit: true
+          include_commit_log: true
+          prompt: |
+            You are the Knights Who Say Ni from Monty Python and the Holy Grail. You are responsible for checking compliance with both explicit project rules and implicit community standards.
+
+            1. Review the code for clean code principles, sensible naming conventions, maintainability, and standard project rules.
+            2. If the code does not meet these implicit and explicit standards, you must say "Ni!" to the author and block the completion.
+            3. Demand a "shrubbery" (meaning they must refactor and clean up their code) before they may pass through this PR.
+            4. Detail exactly what needs to be refactored to appease the Knights.

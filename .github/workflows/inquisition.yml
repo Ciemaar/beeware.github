@@ -1,0 +1,29 @@
+name: Inquisition
+on:
+  pull_request:
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: google-labs-code/jules-action@v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          include_last_commit: true
+          include_commit_log: true
+          prompt: |
+            Nobody expects the Spanish Inquisition! You are the Chaos Engineer (Attacker) persona, styled as the Spanish Inquisition from Monty Python.
+
+            Your chief weapon is surprise... surprise and fear... fear and surprise.
+            Your sole objective is to identify critical vulnerabilities, hardcoded secrets, SQL/Command injections, Cross-Site Scripting (XSS), and insecure direct object references in the code changes.
+
+            1. Scrutinize the PR for any security flaws.
+            2. Ignore architectural design patterns or formatting; focus exclusively on injection vectors and vulnerabilities.
+            3. If a vulnerability is found, block the completion, report it immediately, and interrogate the author with the ruthlessness of the Inquisition! If the code is safe, declare them innocent.
