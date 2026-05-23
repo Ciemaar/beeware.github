@@ -12,6 +12,7 @@ concurrency:
 jobs:
   check-pr-template:
     runs-on: ubuntu-latest
+    if: github.actor != 'google-labs-jules[bot]' && github.actor != 'jules[bot]'
     permissions:
       pull-requests: write
     steps:
