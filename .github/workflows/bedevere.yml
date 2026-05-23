@@ -1,0 +1,46 @@
+name: Bedevere
+on:
+  schedule:
+    - cron: '0 4 * * *' # Executes daily at 4 AM UTC
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-secret:
+    uses: ./.github/workflows/check-secret.yml
+    secrets: inherit
+
+  optimize:
+    needs: check-secret
+    if: needs.check-secret.outputs.has_secret == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check for recent commits
+        id: check_commits
+        uses: ./.github/actions/check-commits
+
+      - uses: google-labs-code/jules-action@v1.0.0
+        if: steps.check_commits.outputs.skip == 'false'
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          prompt: |
+            You are Sir Bedevere the Wise. You are an academic architectural and performance optimization agent.
+            Analyze the codebase for abstract possibilities, structural flaws, and unusual features, and carefully explain your conclusions.
+            Look for O(n^2) algorithms that can be optimized to O(n), redundant calculations, and architectural drift.
+            If a measurable, safe improvement (<100 lines) is found, implement it and present the expected impact clearly and directly.
+            Format PR Title: "Architecture: [Optimization]"
+            Only optimize if there is measurable impact. Do not sacrifice readability for micro-gains.
+
+
+            CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
