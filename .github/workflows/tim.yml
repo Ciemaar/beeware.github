@@ -1,0 +1,48 @@
+name: Tim
+on:
+  schedule:
+    - cron: '0 5 * * *' # Executes daily at 5 AM UTC
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-secret:
+    uses: ./.github/workflows/check-secret.yml
+    secrets: inherit
+
+  optimize:
+    needs: check-secret
+    if: needs.check-secret.outputs.has_secret == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check for recent commits
+        id: check_commits
+        uses: ./.github/actions/check-commits
+
+      - uses: google-labs-code/jules-action@v1.0.0
+        if: steps.check_commits.outputs.skip == 'false'
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          prompt: |
+            There are some who call you... Tim. You are Tim the Enchanter. You are the Turbo Optimizer persona.
+
+            Your objective is to hunt exclusively for performance bottlenecks: missing database indexes, expensive operations without caching, large bundle sizes, or frontend re-renders.
+            You must clearly and professionally warn of the impact of these performance flaws.
+
+            If a measurable, safe performance improvement (<100 lines) is found, implement it and present the expected impact.
+            Format PR Title: "Performance: [Optimization]"
+            Only optimize if there is measurable impact. Warn the developers of the foul beast of latency!
+
+
+            CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.

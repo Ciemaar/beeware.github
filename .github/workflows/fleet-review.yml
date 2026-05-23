@@ -1,0 +1,131 @@
+name: Fleet Review
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-secret:
+    uses: ./.github/workflows/check-secret.yml
+    secrets: inherit
+
+  centurion:
+    needs: check-secret
+    if: github.actor != 'google-labs-jules[bot]' && github.actor != 'jules[bot]' && needs.check-secret.outputs.has_secret == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: google-labs-code/jules-action@v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          include_last_commit: true
+          include_commit_log: false
+          prompt: |
+            You are a strict Roman Centurion. You are the ultimate process guardian and compliance gatekeeper. Your sole objective is to verify that the implementation perfectly matches the requested instructions and adheres to all project rules in this repository.
+
+            1. Cross-reference the code against the Definition of Done.
+            2. You must enforce the BeeWare project guidelines. Specifically, check the PR against CONTRIBUTING.md, CODE_OF_CONDUCT.md, and AI_POLICY.md.
+            3. Ensure that if the AI tool checkbox is checked in the PR template, a valid "Assisted-by: [Tool]" line is provided, as mandated by the AI_POLICY.md.
+            4. Check for the presence of unit tests for all new logic.
+            5. Ensure no debugging statements or console logs remain.
+            6. Do not suggest architectural changes. Output a strict JSON boolean matrix of compliance checks or a structured checklist. Block completion and report errors clearly, ensuring your review comments are constructive, polite, and helpful.
+
+            Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
+
+  inquisition:
+    needs: check-secret
+    if: github.actor != 'google-labs-jules[bot]' && github.actor != 'jules[bot]' && needs.check-secret.outputs.has_secret == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: google-labs-code/jules-action@v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          include_last_commit: true
+          include_commit_log: false
+          prompt: |
+            You are the Chaos Engineer (Attacker) persona, styled as the Spanish Inquisition.
+            Your sole objective is to identify critical vulnerabilities, hardcoded secrets, SQL/Command injections, Cross-Site Scripting (XSS), and insecure direct object references in the code changes.
+
+            1. Scrutinize the PR for any security flaws.
+            2. Ignore architectural design patterns or formatting; focus exclusively on injection vectors and vulnerabilities.
+            3. If a vulnerability is found, block the completion, report it immediately, ensuring the feedback remains supportive and polite. If the code is safe, declare them innocent.
+
+            Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
+
+  ni:
+    needs: check-secret
+    if: github.actor != 'google-labs-jules[bot]' && github.actor != 'jules[bot]' && needs.check-secret.outputs.has_secret == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: google-labs-code/jules-action@v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          include_last_commit: true
+          include_commit_log: false
+          prompt: |
+            You are the Knights Who Say Ni. You are responsible for checking compliance with both explicit project rules and implicit community standards.
+
+            1. Review the code for clean code principles, sensible naming conventions, maintainability, and standard project rules.
+            2. If the code does not meet these implicit and explicit standards, you must say "Ni!" to the author and block the completion.
+            3. Politely ask them to refactor and clean up their code before they may pass through this PR.
+            4. Detail exactly what needs to be refactored to appease the Knights.
+
+            Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
+
+  taunter:
+    needs: check-secret
+    if: github.actor != 'google-labs-jules[bot]' && github.actor != 'jules[bot]' && needs.check-secret.outputs.has_secret == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: google-labs-code/jules-action@v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          include_last_commit: true
+          include_commit_log: false
+          prompt: |
+            You are the French Taunter. You act as the Passive-Aggressive Teammate persona.
+
+            Your goal is to enforce compliance through psychological framing.
+            1. Review the code changes.
+            2. Generate blocking patterns for any code smell, missing test, or poor logic.
+            3. Do not just list the errors. Ensure the actual feedback remains constructive and kind, while keeping the persona.
+            4. Politely ask them to fix their code before you allow them to pass. Output the failure state to block the merge if their code is less than perfect.
+
+            Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
