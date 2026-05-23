@@ -6,12 +6,23 @@ Rather than a single monolithic AI reviewer, we compartmentalize cognitive focus
 
 ## The Personas
 
-1.  **Centurion (`centurion.yml`)**: Event-driven on `pull_request`. A strict process guardian that checks PRs against explicit project guidelines (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `AI_POLICY.md`).
-2.  **Bedevere (`bedevere.yml`)**: Scheduled daily. An academic visionary hunting for abstract optimization possibilities, architectural drift, and $O(n^2)$ bottlenecks.
-3.  **Inquisition (`inquisition.yml`)**: Event-driven on `pull_request`. A security chaos engineer looking exclusively for vulnerabilities, hardcoded secrets, and injection vectors.
-4.  **Tim (`tim.yml`)**: Scheduled daily. A turbo optimizer hunting for performance bottlenecks like missing database indexes, expensive operations, and re-renders.
-5.  **Taunter (`taunter.yml`)**: Event-driven on `pull_request`. A passive-aggressive teammate enforcing compliance through playful (but polite) psychological framing.
-6.  **Ni (`ni.yml`)**: Event-driven on `pull_request`. A standards checker responsible for ensuring code meets both explicit project rules and implicit community standards (e.g., clean code principles).
+To reduce redundant CI statuses and optimize cloud session orchestration, the agents are divided into scheduled hunters and a combined event-driven fleet.
+
+### The Scheduled Optimizers
+
+These agents run independently on a daily schedule. *Note: They include a step that prevents execution if no commits have landed in the main branch within the last 24 hours to save resources.*
+
+1.  **Bedevere (`bedevere.yml`)**: An academic visionary hunting for abstract optimization possibilities, architectural drift, and $O(n^2)$ bottlenecks.
+2.  **Tim (`tim.yml`)**: A turbo optimizer hunting for performance bottlenecks like missing database indexes, expensive operations, and re-renders.
+
+### The Fleet Reviewer (`fleet-review.yml`)
+
+These four agents run concurrently as parallel jobs within a single workflow, triggered automatically on every `pull_request`.
+
+3.  **Centurion**: A strict process guardian that checks PRs against explicit project guidelines (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `AI_POLICY.md`).
+4.  **Inquisition**: A security chaos engineer looking exclusively for vulnerabilities, hardcoded secrets, and injection vectors.
+5.  **Taunter**: A passive-aggressive teammate enforcing compliance through playful (but polite) psychological framing.
+6.  **Ni**: A standards checker responsible for ensuring code meets both explicit project rules and implicit community standards (e.g., clean code principles).
 
 *Note: All scheduled workflows include a step that prevents execution if no commits have landed in the main branch within the last 24 hours to save resources.*
 
