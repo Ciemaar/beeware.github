@@ -45,4 +45,6 @@ jobs:
             4. Detail exactly what needs to be refactored to appease the Knights.
 
 
+            Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.

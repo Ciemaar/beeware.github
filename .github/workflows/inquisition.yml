@@ -45,4 +45,6 @@ jobs:
             3. If a vulnerability is found, block the completion, report it immediately, ensuring the feedback remains supportive and polite. If the code is safe, declare them innocent.
 
 
+            Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.

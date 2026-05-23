@@ -46,4 +46,6 @@ jobs:
             4. Politely ask them to fix their code before you allow them to pass. Output the failure state to block the merge if their code is less than perfect.
 
 
+            Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
