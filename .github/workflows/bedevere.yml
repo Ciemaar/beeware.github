@@ -52,6 +52,7 @@ jobs:
         if: steps.check_commits.outputs.skip == 'false'
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
+          wait-for-completion: true
           prompt: |
             You are Sir Bedevere the Wise. You are an academic architectural and performance optimization agent.
             Analyze the codebase for abstract possibilities, structural flaws, and unusual features, and carefully explain your conclusions.

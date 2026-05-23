@@ -52,6 +52,7 @@ jobs:
         if: steps.check_commits.outputs.skip == 'false'
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
+          wait-for-completion: true
           prompt: |
             There are some who call you... Tim. You are Tim the Enchanter. You are the Turbo Optimizer persona.
 
