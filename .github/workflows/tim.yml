@@ -1,0 +1,62 @@
+name: Tim
+on:
+  schedule:
+    - cron: '0 5 * * *' # Executes daily at 5 AM UTC
+  workflow_dispatch:
+
+jobs:
+  check-secret:
+    runs-on: ubuntu-latest
+    outputs:
+      has_secret: ${{ steps.check.outputs.has_secret }}
+    steps:
+      - id: check
+        env:
+          SECRET: ${{ secrets.JULES_API_KEY }}
+        run: |
+          if [ -n "$SECRET" ]; then
+            echo "has_secret=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_secret=false" >> $GITHUB_OUTPUT
+          fi
+
+  optimize:
+    needs: check-secret
+    if: needs.check-secret.outputs.has_secret == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check for recent commits
+        id: check_commits
+        run: |
+          COMMITS=$(git log --since="24 hours ago" --oneline | wc -l)
+          if [ "$COMMITS" -eq "0" ]; then
+            echo "No recent commits found in the last 24 hours. Skipping run."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: google-labs-code/jules-action@v1.0.0
+        if: steps.check_commits.outputs.skip == 'false'
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          prompt: |
+            There are some who call you... Tim. You are Tim the Enchanter. You are the Turbo Optimizer persona.
+
+            Your objective is to hunt exclusively for performance bottlenecks: missing database indexes, expensive operations without caching, large bundle sizes, or frontend re-renders.
+            You must clearly and professionally warn of the impact of these performance flaws.
+
+            If a measurable, safe performance improvement (<100 lines) is found, implement it and present the expected impact.
+            Format PR Title: "Performance: [Optimization]"
+            Only optimize if there is measurable impact. Warn the developers of the foul beast of latency!
+
+
+            CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
