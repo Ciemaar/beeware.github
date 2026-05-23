@@ -3,7 +3,24 @@ on:
   pull_request:
 
 jobs:
+  check-secret:
+    runs-on: ubuntu-latest
+    outputs:
+      has_secret: ${{ steps.check.outputs.has_secret }}
+    steps:
+      - id: check
+        env:
+          SECRET: ${{ secrets.JULES_API_KEY }}
+        run: |
+          if [ -n "$SECRET" ]; then
+            echo "has_secret=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_secret=false" >> $GITHUB_OUTPUT
+          fi
+
   review:
+    needs: check-secret
+    if: needs.check-secret.outputs.has_secret == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,7 +41,7 @@ jobs:
 
             1. Scrutinize the PR for any security flaws.
             2. Ignore architectural design patterns or formatting; focus exclusively on injection vectors and vulnerabilities.
-            3. If a vulnerability is found, block the completion, report it immediately, and report it immediately, ensuring the feedback remains supportive and polite. If the code is safe, declare them innocent.
+            3. If a vulnerability is found, block the completion, report it immediately, ensuring the feedback remains supportive and polite. If the code is safe, declare them innocent.
 
 
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
