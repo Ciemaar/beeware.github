@@ -22,18 +22,16 @@ To set up an identical swarm of agents in another repository, you can provide th
 ```markdown
 Please set up a persona-driven AI code review system using Google Jules (`google-labs-code/jules-action@v1.0.0`) via GitHub Actions.
 
-Create six separate YAML workflow files in `.github/workflows/`, themed after Monty Python characters, but ensure all prompts include a critical directive to remain polite, helpful, kind, and professional (no actual threats, demands, or unclear pseudo-academic writing).
+Create three YAML workflow files in `.github/workflows/` (one for the scheduled tasks, and one fleet action for PRs), themed after Monty Python characters, but ensure all prompts include a critical directive to remain polite, helpful, kind, and professional (no actual threats, demands, or unclear pseudo-academic writing).
 
-1. `centurion.yml`: Triggers on `pull_request`. Check against project guidelines, testing requirements, and Definition of Done.
+1. `fleet-review.yml`: Triggers on `pull_request`. A combined workflow that runs four parallel jobs (Centurion, Inquisition, Taunter, Ni) using the Jules action to audit compliance, security, logic, and standards.
 2. `bedevere.yml`: Triggers on daily schedule (`cron: '0 4 * * *'`). Search for algorithmic complexity ($O(n^2)$ to $O(n)$) and structural flaws.
-3. `inquisition.yml`: Triggers on `pull_request`. Search exclusively for security vulnerabilities and injection vectors.
-4. `tim.yml`: Triggers on daily schedule (`cron: '0 5 * * *'`). Search exclusively for performance bottlenecks (missing indexes, missing caching).
-5. `taunter.yml`: Triggers on `pull_request`. Point out code smells, missing tests, or poor logic using playful psychological framing.
-6. `ni.yml`: Triggers on `pull_request`. Enforce implicit community standards (clean code, sensible naming).
+3. `tim.yml`: Triggers on daily schedule (`cron: '0 5 * * *'`). Search exclusively for performance bottlenecks (missing indexes, missing caching).
 
 Requirements for all workflows:
 - All must use the `JULES_API_KEY` repository secret.
-- All `pull_request` triggers MUST include `actions/checkout@v4` with `fetch-depth: 0` before the `jules-action` step.
+- All `pull_request` triggers MUST include `actions/checkout@v4` with `fetch-depth: 0` and `persist-credentials: false` before the `jules-action` step.
+- Include standard GitHub concurrency cancellation blocks (`cancel-in-progress: true`) on all workflows.
 - All `schedule` triggers must include a bash script step using `git log` to skip the `jules-action` execution if no commits have landed in the last 24 hours.
 - Permissions should be `contents: read`, `pull-requests: write` for reviewers, and `contents: write`, `pull-requests: write` for optimizers.
 ```
