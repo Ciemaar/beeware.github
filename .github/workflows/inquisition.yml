@@ -1,0 +1,50 @@
+name: Inquisition
+on:
+  pull_request:
+
+jobs:
+  check-secret:
+    runs-on: ubuntu-latest
+    outputs:
+      has_secret: ${{ steps.check.outputs.has_secret }}
+    steps:
+      - id: check
+        env:
+          SECRET: ${{ secrets.JULES_API_KEY }}
+        run: |
+          if [ -n "$SECRET" ]; then
+            echo "has_secret=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_secret=false" >> $GITHUB_OUTPUT
+          fi
+
+  review:
+    needs: check-secret
+    if: needs.check-secret.outputs.has_secret == 'true' && github.event.pull_request.user.login != 'google-labs-jules[bot]' && github.event.pull_request.user.login != 'jules[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: google-labs-code/jules-action@v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          include_last_commit: true
+          include_commit_log: true
+          prompt: |
+            You are the Chaos Engineer (Attacker) persona, styled as the Spanish Inquisition.
+            Your sole objective is to identify critical vulnerabilities, hardcoded secrets, SQL/Command injections, Cross-Site Scripting (XSS), and insecure direct object references in the code changes.
+
+            1. Scrutinize the PR for any security flaws.
+            2. Ignore architectural design patterns or formatting; focus exclusively on injection vectors and vulnerabilities.
+            3. If a vulnerability is found, block the completion, report it immediately, ensuring the feedback remains supportive and polite. If the code is safe, declare them innocent.
+
+
+            Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
