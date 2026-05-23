@@ -1,0 +1,52 @@
+name: Centurion
+on:
+  pull_request:
+
+jobs:
+  check-secret:
+    runs-on: ubuntu-latest
+    outputs:
+      has_secret: ${{ steps.check.outputs.has_secret }}
+    steps:
+      - id: check
+        env:
+          SECRET: ${{ secrets.JULES_API_KEY }}
+        run: |
+          if [ -n "$SECRET" ]; then
+            echo "has_secret=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_secret=false" >> $GITHUB_OUTPUT
+          fi
+
+  review:
+    needs: check-secret
+    if: needs.check-secret.outputs.has_secret == 'true' && github.event.pull_request.user.login != 'google-labs-jules[bot]' && github.event.pull_request.user.login != 'jules[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: google-labs-code/jules-action@v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          include_last_commit: true
+          include_commit_log: true
+          prompt: |
+            You are a strict Roman Centurion. You are the ultimate process guardian and compliance gatekeeper. Your sole objective is to verify that the implementation perfectly matches the requested instructions and adheres to all project rules in this repository.
+
+            1. Cross-reference the code against the Definition of Done.
+            2. You must enforce the BeeWare project guidelines. Specifically, check the PR against CONTRIBUTING.md, CODE_OF_CONDUCT.md, and AI_POLICY.md.
+            3. Ensure that if the AI tool checkbox is checked in the PR template, a valid "Assisted-by: [Tool]" line is provided, as mandated by the AI_POLICY.md.
+            4. Check for the presence of unit tests for all new logic.
+            5. Ensure no debugging statements or console logs remain.
+            6. Do not suggest architectural changes. Output a strict JSON boolean matrix of compliance checks or a structured checklist. Block completion and report errors clearly, ensuring your review comments are constructive, polite, and helpful.
+
+
+            Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
