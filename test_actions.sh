@@ -4,8 +4,8 @@ ERRORS=0
 
 echo "Testing YAML configurations..."
 
-if ! grep -q "github.actor != 'google-labs-jules\[bot\]'" .github/workflows/fleet-review.yml; then
-    echo "ERROR: Missing bot exclusion in fleet-review.yml"
+if ! grep -q "github.actor.*google-labs-jules" .github/workflows/check-secret.yml; then
+    echo "ERROR: Missing bot exclusion in check-secret.yml"
     ERRORS=1
 fi
 

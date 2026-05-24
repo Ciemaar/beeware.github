@@ -8,7 +8,6 @@ concurrency:
 
 jobs:
   check-secret:
-    if: github.actor != 'google-labs-jules[bot]' && github.actor != 'jules[bot]'
     uses: ./.github/workflows/check-secret.yml
     secrets: inherit
 
@@ -27,7 +26,6 @@ jobs:
       - uses: google-labs-code/jules-action@v1.0.0
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
-          wait-for-completion: true
           include_last_commit: true
           include_commit_log: false
           prompt: |
@@ -61,7 +59,6 @@ jobs:
       - uses: google-labs-code/jules-action@v1.0.0
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
-          wait-for-completion: true
           include_last_commit: true
           include_commit_log: false
           prompt: |
@@ -93,7 +90,6 @@ jobs:
       - uses: google-labs-code/jules-action@v1.0.0
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
-          wait-for-completion: true
           include_last_commit: true
           include_commit_log: false
           prompt: |
@@ -125,7 +121,6 @@ jobs:
       - uses: google-labs-code/jules-action@v1.0.0
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
-          wait-for-completion: true
           include_last_commit: true
           include_commit_log: false
           prompt: |
