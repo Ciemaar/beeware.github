@@ -10,13 +10,14 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  check-secret:
-    uses: ./.github/workflows/check-secret.yml
+  run-agents:
+    if: github.actor != 'google-labs-jules[bot]' && github.actor != 'jules[bot]' && !contains(github.event.pull_request.body, 'PR created automatically by Jules')
+    uses: ./.github/workflows/run-agents.yml
     secrets: inherit
 
   centurion:
-    needs: check-secret
-    if: needs.check-secret.outputs.has_secret == 'true'
+    needs: run-agents
+    if: needs.run-agents.outputs.run_agents == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -48,8 +49,8 @@ jobs:
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
 
   inquisition:
-    needs: [check-secret, centurion]
-    if: needs.check-secret.outputs.has_secret == 'true'
+    needs: [run-agents, centurion]
+    if: needs.run-agents.outputs.run_agents == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -79,8 +80,8 @@ jobs:
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
 
   ni:
-    needs: [check-secret, centurion]
-    if: needs.check-secret.outputs.has_secret == 'true'
+    needs: [run-agents, centurion]
+    if: needs.run-agents.outputs.run_agents == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -110,8 +111,8 @@ jobs:
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
 
   taunter:
-    needs: [check-secret, centurion]
-    if: needs.check-secret.outputs.has_secret == 'true'
+    needs: [run-agents, centurion]
+    if: needs.run-agents.outputs.run_agents == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read

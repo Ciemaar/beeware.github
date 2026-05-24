@@ -1,0 +1,28 @@
+name: Run Agents
+on:
+  workflow_call:
+    outputs:
+      run_agents:
+        description: "True if the JULES_API_KEY is set"
+        value: ${{ jobs.check.outputs.run_agents }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      run_agents: ${{ steps.check.outputs.run_agents }}
+    steps:
+      - id: check
+        env:
+          SECRET: ${{ secrets.JULES_API_KEY }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [[ "${{ github.actor }}" == "google-labs-jules[bot]" ]] || [[ "${{ github.actor }}" == "jules[bot]" ]]; then
+            echo "run_agents=false" >> $GITHUB_OUTPUT
+          elif grep -q "PR created automatically by Jules" <<< "$PR_BODY"; then
+            echo "run_agents=false" >> $GITHUB_OUTPUT
+          elif [ -n "$SECRET" ]; then
+            echo "run_agents=true" >> $GITHUB_OUTPUT
+          else
+            echo "run_agents=false" >> $GITHUB_OUTPUT
+          fi

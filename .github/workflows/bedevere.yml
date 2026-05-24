@@ -12,13 +12,13 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  check-secret:
-    uses: ./.github/workflows/check-secret.yml
+  run-agents:
+    uses: ./.github/workflows/run-agents.yml
     secrets: inherit
 
   optimize:
-    needs: check-secret
-    if: needs.check-secret.outputs.has_secret == 'true'
+    needs: run-agents
+    if: needs.run-agents.outputs.run_agents == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
