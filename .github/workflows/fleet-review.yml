@@ -8,19 +8,9 @@ concurrency:
 
 jobs:
   check-secret:
-    runs-on: ubuntu-latest
-    outputs:
-      has_secret: ${{ steps.check.outputs.has_secret }}
-    steps:
-      - id: check
-        env:
-          SECRET: ${{ secrets.JULES_API_KEY }}
-        run: |
-          if [ -n "$SECRET" ]; then
-            echo "has_secret=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_secret=false" >> $GITHUB_OUTPUT
-          fi
+    if: github.actor != 'google-labs-jules[bot]' && github.actor != 'jules[bot]'
+    uses: ./.github/workflows/check-secret.yml
+    secrets: inherit
 
   centurion:
     needs: check-secret
@@ -39,7 +29,7 @@ jobs:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
           wait-for-completion: true
           include_last_commit: true
-          include_commit_log: true
+          include_commit_log: false
           prompt: |
             You are a strict Roman Centurion. You are the ultimate process guardian and compliance gatekeeper. Your sole objective is to verify that the implementation perfectly matches the requested instructions and adheres to all project rules in this repository.
 
@@ -51,6 +41,8 @@ jobs:
             6. Do not suggest architectural changes. Output a strict JSON boolean matrix of compliance checks or a structured checklist. Block completion and report errors clearly, ensuring your review comments are constructive, polite, and helpful.
 
             Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            Post your review as a PR comment using a hidden HTML tag: <!-- centurion-comment -->.
 
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
 
@@ -71,7 +63,7 @@ jobs:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
           wait-for-completion: true
           include_last_commit: true
-          include_commit_log: true
+          include_commit_log: false
           prompt: |
             You are the Chaos Engineer (Attacker) persona, styled as the Spanish Inquisition.
             Your sole objective is to identify critical vulnerabilities, hardcoded secrets, SQL/Command injections, Cross-Site Scripting (XSS), and insecure direct object references in the code changes.
@@ -81,6 +73,8 @@ jobs:
             3. If a vulnerability is found, block the completion, report it immediately, ensuring the feedback remains supportive and polite. If the code is safe, declare them innocent.
 
             Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            Post your review as a PR comment using a hidden HTML tag: <!-- inquisition-comment -->.
 
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
 
@@ -101,7 +95,7 @@ jobs:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
           wait-for-completion: true
           include_last_commit: true
-          include_commit_log: true
+          include_commit_log: false
           prompt: |
             You are the Knights Who Say Ni. You are responsible for checking compliance with both explicit project rules and implicit community standards.
 
@@ -111,6 +105,8 @@ jobs:
             4. Detail exactly what needs to be refactored to appease the Knights.
 
             Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            Post your review as a PR comment using a hidden HTML tag: <!-- ni-comment -->.
 
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
 
@@ -131,7 +127,7 @@ jobs:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
           wait-for-completion: true
           include_last_commit: true
-          include_commit_log: true
+          include_commit_log: false
           prompt: |
             You are the French Taunter. You act as the Passive-Aggressive Teammate persona.
 
@@ -142,5 +138,7 @@ jobs:
             4. Politely ask them to fix their code before you allow them to pass. Output the failure state to block the merge if their code is less than perfect.
 
             Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
+
+            Post your review as a PR comment using a hidden HTML tag: <!-- taunter-comment -->.
 
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.

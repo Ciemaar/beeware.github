@@ -10,19 +10,8 @@ concurrency:
 
 jobs:
   check-secret:
-    runs-on: ubuntu-latest
-    outputs:
-      has_secret: ${{ steps.check.outputs.has_secret }}
-    steps:
-      - id: check
-        env:
-          SECRET: ${{ secrets.JULES_API_KEY }}
-        run: |
-          if [ -n "$SECRET" ]; then
-            echo "has_secret=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_secret=false" >> $GITHUB_OUTPUT
-          fi
+    uses: ./.github/workflows/check-secret.yml
+    secrets: inherit
 
   optimize:
     needs: check-secret
@@ -39,14 +28,7 @@ jobs:
 
       - name: Check for recent commits
         id: check_commits
-        run: |
-          COMMITS=$(git log --since="24 hours ago" --oneline | wc -l)
-          if [ "$COMMITS" -eq "0" ]; then
-            echo "No recent commits found in the last 24 hours. Skipping run."
-            echo "skip=true" >> $GITHUB_OUTPUT
-          else
-            echo "skip=false" >> $GITHUB_OUTPUT
-          fi
+        uses: ./.github/actions/check-commits
 
       - uses: google-labs-code/jules-action@v1.0.0
         if: steps.check_commits.outputs.skip == 'false'
