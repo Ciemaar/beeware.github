@@ -9,8 +9,13 @@ if ! grep -q "google-labs-jules" .github/workflows/run-agents.yml; then
     ERRORS=1
 fi
 
-if ! grep -q 'grep -q "PR created automatically by Jules"' .github/workflows/run-agents.yml; then
-    echo "ERROR: Missing PR body bot exclusion in run-agents.yml"
+if ! grep -q 'PR_DRAFT' .github/workflows/run-agents.yml; then
+    echo "ERROR: Missing PR draft bot exclusion in run-agents.yml"
+    ERRORS=1
+fi
+
+if ! grep -q 'PR_TITLE.*Architecture' .github/workflows/run-agents.yml; then
+    echo "ERROR: Missing PR title exclusion in run-agents.yml"
     ERRORS=1
 fi
 
