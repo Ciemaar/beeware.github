@@ -22,7 +22,7 @@ jobs:
           }
 
           require "^[[:space:]]*## PR Checklist:" \
-            "Could not find the BeeWare PR checklist in the pull request comment. This probably means you've used a tool to submit your PR, rather than the GitHub UI. The BeeWare project provides, and requires the use of a standard template for all PRs. Your PR will be ignored until/unless you add the required components of the template. See https://beeware.org/contributing/guide/how/submit-pr/ for details."
+            "Could not find the BeeWare PR checklist in the pull request comment. This probably means you've used a tool to submit your PR, rather than the GitHub UI. The BeeWare project provides and requires the use of a standard template for all PRs. Your PR will be ignored until/unless you add the required components of the template. See https://beeware.org/contributing/guide/how/submit-pr/#pr-content for details."
 
           require "^[[:space:]]*- \[\s*[xX]\s*\] I will abide by the BeeWare Code of Conduct" \
             "The 'Code of Conduct' checkbox in the PR checklist must be checked."
