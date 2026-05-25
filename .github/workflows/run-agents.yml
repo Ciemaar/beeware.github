@@ -1,0 +1,36 @@
+name: Run Agents
+on:
+  workflow_call:
+    outputs:
+      run_agents:
+        description: "True if the JULES_API_KEY is set"
+        value: ${{ jobs.check.outputs.run_agents }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      run_agents: ${{ steps.check.outputs.run_agents }}
+    steps:
+      - id: check
+        env:
+          SECRET: ${{ secrets.JULES_API_KEY }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_DRAFT: ${{ github.event.pull_request.draft }}
+        run: |
+          if [[ "${{ github.actor }}" == "google-labs-jules[bot]" ]] || [[ "${{ github.actor }}" == "jules[bot]" ]]; then
+            echo "Skipping because actor is a bot: ${{ github.actor }}"
+            echo "run_agents=false" >> $GITHUB_OUTPUT
+          elif [[ "$PR_DRAFT" == "true" ]]; then
+            echo "Skipping because PR is a draft."
+            echo "run_agents=false" >> $GITHUB_OUTPUT
+          elif [[ "$PR_TITLE" == "Architecture: "* ]] || [[ "$PR_TITLE" == "Performance: "* ]]; then
+            echo "Skipping because PR was created by scheduled review agents."
+            echo "run_agents=false" >> $GITHUB_OUTPUT
+          elif [ -n "$SECRET" ]; then
+            echo "Secret found. Agents will run."
+            echo "run_agents=true" >> $GITHUB_OUTPUT
+          else
+            echo "Skipping because JULES_API_KEY is not set."
+            echo "run_agents=false" >> $GITHUB_OUTPUT
+          fi

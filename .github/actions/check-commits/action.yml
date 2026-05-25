@@ -1,0 +1,20 @@
+name: 'Check Commits'
+description: 'Checks if there are any commits in the last 24 hours'
+outputs:
+  skip:
+    description: "True if no recent commits were found"
+    value: ${{ steps.check_commits.outputs.skip }}
+runs:
+  using: "composite"
+  steps:
+    - name: Check for recent commits
+      id: check_commits
+      shell: bash
+      run: |
+        COMMITS=$(git log --since="24 hours ago" --oneline | wc -l)
+        if [ "$COMMITS" -eq "0" ]; then
+          echo "No recent commits found in the last 24 hours. Skipping run."
+          echo "skip=true" >> $GITHUB_OUTPUT
+        else
+          echo "skip=false" >> $GITHUB_OUTPUT
+        fi
