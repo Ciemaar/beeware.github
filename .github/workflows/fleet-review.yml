@@ -44,7 +44,7 @@ jobs:
 
             Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
 
-            Post your review as a PR comment using a hidden HTML tag: <!-- centurion-comment -->.
+            Post your review as a PR comment using a hidden HTML tag: <!-- centurion-comment -->. Ensure the first line (or title) of your comment clearly indicates whether your review is POSITIVE (e.g., 'Pass', 'Approved', 'Clean') or NEGATIVE (e.g., 'Block', 'Action Required', 'Violations Found').
 
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
 
@@ -75,7 +75,7 @@ jobs:
 
             Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
 
-            Post your review as a PR comment using a hidden HTML tag: <!-- inquisition-comment -->.
+            Post your review as a PR comment using a hidden HTML tag: <!-- inquisition-comment -->. Ensure the first line (or title) of your comment clearly indicates whether your review is POSITIVE (e.g., 'Pass', 'Approved', 'Clean') or NEGATIVE (e.g., 'Block', 'Action Required', 'Violations Found').
 
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
 
@@ -106,7 +106,7 @@ jobs:
 
             Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
 
-            Post your review as a PR comment using a hidden HTML tag: <!-- ni-comment -->.
+            Post your review as a PR comment using a hidden HTML tag: <!-- ni-comment -->. Ensure the first line (or title) of your comment clearly indicates whether your review is POSITIVE (e.g., 'Pass', 'Approved', 'Clean') or NEGATIVE (e.g., 'Block', 'Action Required', 'Violations Found').
 
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
 
@@ -138,6 +138,6 @@ jobs:
 
             Session triggered by PR #${{ github.event.pull_request.number }} - Please reference this PR number in any issue or PR you generate so GitHub automatically creates a cross-link.
 
-            Post your review as a PR comment using a hidden HTML tag: <!-- taunter-comment -->.
+            Post your review as a PR comment using a hidden HTML tag: <!-- taunter-comment -->. Ensure the first line (or title) of your comment clearly indicates whether your review is POSITIVE (e.g., 'Pass', 'Approved', 'Clean') or NEGATIVE (e.g., 'Block', 'Action Required', 'Violations Found').
 
             CRITICAL DIRECTIVE: Regardless of your personality, all your generated comments, reviews, and messages MUST remain helpful, kind, and friendly. You must follow the BeeWare project's standard 'polite but direct' tone.
