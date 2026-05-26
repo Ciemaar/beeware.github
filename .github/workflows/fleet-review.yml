@@ -30,6 +30,7 @@ jobs:
       - uses: google-labs-code/jules-action@v1.0.0
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: ${{ github.event.pull_request.head.ref }}
           include_last_commit: true
           include_commit_log: false
           prompt: |
@@ -63,6 +64,7 @@ jobs:
       - uses: google-labs-code/jules-action@v1.0.0
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: ${{ github.event.pull_request.head.ref }}
           include_last_commit: true
           include_commit_log: false
           prompt: |
@@ -94,6 +96,7 @@ jobs:
       - uses: google-labs-code/jules-action@v1.0.0
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: ${{ github.event.pull_request.head.ref }}
           include_last_commit: true
           include_commit_log: false
           prompt: |
@@ -125,6 +128,7 @@ jobs:
       - uses: google-labs-code/jules-action@v1.0.0
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: ${{ github.event.pull_request.head.ref }}
           include_last_commit: true
           include_commit_log: false
           prompt: |
